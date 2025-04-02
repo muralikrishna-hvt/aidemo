@@ -57,9 +57,15 @@ export default function AuthPage() {
   });
   
   function onLoginSubmit(data: LoginFormValues) {
+    console.log("Login form submitted with:", data);
+    
     loginMutation.mutate(data, {
       onSuccess: () => {
+        console.log("Login succeeded, navigating to dashboard");
         navigate("/dashboard");
+      },
+      onError: (error) => {
+        console.error("Login failed in form handler:", error);
       }
     });
   }
@@ -68,9 +74,15 @@ export default function AuthPage() {
     // Remove confirmPassword as it's not part of the API schema
     const { confirmPassword, ...registerData } = data;
     
+    console.log("Register form submitted with:", registerData);
+    
     registerMutation.mutate(registerData, {
       onSuccess: () => {
+        console.log("Registration succeeded, navigating to dashboard");
         navigate("/dashboard");
+      },
+      onError: (error) => {
+        console.error("Registration failed in form handler:", error);
       }
     });
   }
