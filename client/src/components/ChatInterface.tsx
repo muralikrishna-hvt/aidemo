@@ -104,16 +104,18 @@ export function ChatInterface() {
   
   return (
     <Card className="shadow-sm border border-gray-200 overflow-hidden">
-      <CardHeader className="border-b border-gray-200 px-5 py-4 bg-gray-50">
+      <CardHeader className="border-b border-gray-200 px-4 sm:px-5 py-4 bg-gradient-to-r from-blue-50 to-indigo-50">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center">
+          <div className="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm">
             <span className="material-icons">smart_toy</span>
           </div>
           <div>
-            <h2 className="font-semibold">AI Wealth Advisor</h2>
-            <div className="flex items-center text-xs text-gray-500">
+            <h2 className="font-semibold text-gray-900">AI Wealth Advisor</h2>
+            <div className="flex flex-wrap items-center text-xs text-gray-600">
               <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              <span>Online • Using Gemini with MCP</span>
+              <span className="whitespace-nowrap">Online • </span>
+              <span className="hidden sm:inline-block mx-1">Using </span>
+              <span className="whitespace-nowrap font-medium text-blue-700">Gemini with MCP</span>
             </div>
           </div>
         </div>
@@ -121,7 +123,7 @@ export function ChatInterface() {
       
       <CardContent className="p-0">
         {/* Chat messages container */}
-        <ScrollArea className="h-[400px]">
+        <ScrollArea className="h-[450px] md:h-[500px]">
           <div className="p-5 space-y-6">
             {messages.map((message, index) => (
               <div 
@@ -129,7 +131,7 @@ export function ChatInterface() {
                 className={`flex items-start space-x-3 ${message.isUserMessage ? 'justify-end' : ''}`}
               >
                 {!message.isUserMessage && (
-                  <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0 mt-1">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
                     <span className="material-icons text-sm">smart_toy</span>
                   </div>
                 )}
@@ -138,14 +140,14 @@ export function ChatInterface() {
                   className={`${
                     message.isUserMessage
                       ? 'bg-blue-50 text-blue-800'
-                      : 'bg-gray-100 text-gray-800'
-                  } rounded-lg p-3 max-w-[85%] shadow-sm`}
+                      : 'bg-white text-gray-800 border border-gray-200'
+                  } rounded-lg p-4 max-w-[85%] shadow-sm`}
                 >
-                  <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                  <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">{message.content}</p>
                 </div>
                 
                 {message.isUserMessage && (
-                  <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 mt-1">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
                     <span className="material-icons text-sm">person</span>
                   </div>
                 )}
@@ -172,14 +174,15 @@ export function ChatInterface() {
             {/* Loading indicator */}
             {isLoading && (
               <div className="flex items-start space-x-3">
-                <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0 mt-1">
+                <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
                   <span className="material-icons text-sm">smart_toy</span>
                 </div>
-                <div className="bg-gray-100 rounded-lg p-3 max-w-[85%]">
-                  <div className="flex space-x-2">
-                    <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 max-w-[85%] shadow-sm">
+                  <div className="flex space-x-3 items-center">
+                    <div className="h-3 w-3 bg-blue-400 rounded-full animate-bounce"></div>
+                    <div className="h-3 w-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="h-3 w-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <span className="text-sm text-gray-500 ml-2">Thinking...</span>
                   </div>
                 </div>
               </div>
@@ -192,14 +195,14 @@ export function ChatInterface() {
         {/* Chat input area */}
         <div className="border-t border-gray-200 p-4 bg-gray-50">
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
+            <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 hidden sm:flex">
               <span className="material-icons">mic</span>
             </Button>
             <div className="flex-1 relative">
               <Input
                 type="text"
                 placeholder="Ask your wealth advisor..."
-                className="rounded-full pl-4 pr-10 py-6 text-gray-700"
+                className="rounded-full pl-4 pr-10 py-5 md:py-6 text-gray-700 text-sm md:text-base shadow-sm"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -208,25 +211,25 @@ export function ChatInterface() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden sm:flex"
               >
                 <span className="material-icons">attach_file</span>
               </Button>
             </div>
             <Button 
-              className="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-primary-600"
+              className="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700 shadow-sm"
               onClick={handleSendMessage}
               disabled={isLoading || !inputValue.trim()}
             >
               <span className="material-icons">send</span>
             </Button>
           </div>
-          <div className="flex items-center justify-between mt-2 px-12">
-            <div className="text-xs text-gray-500 flex items-center">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-3 px-1 sm:px-12">
+            <div className="text-xs text-gray-500 flex items-center mb-2 sm:mb-0">
               <span className="material-icons text-xs mr-1">info</span>
-              Powered by Gemini with Model Context Protocol
+              <span className="whitespace-nowrap">Powered by Gemini with Model Context Protocol</span>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 h-auto w-auto p-0">
                 <span className="material-icons text-sm">settings</span>
               </Button>
