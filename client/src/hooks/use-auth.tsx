@@ -1,23 +1,12 @@
-import { createContext, ReactNode, useContext, useState, useEffect } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import {
+  useQuery,
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
 import { User, InsertUser } from "@shared/schema";
-import { queryClient } from "../lib/queryClient";
+import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-
-// Dummy user for demo purposes
-const dummyUser: User = {
-  id: 1,
-  username: "demouser",
-  password: "password",
-  email: "demo@example.com",
-  fullName: "Demo User",
-  riskProfile: "Aggressive",
-  investmentStyle: "Growth",
-  createdAt: new Date(),
-};
 
 type AuthContextType = {
   user: User | null;
@@ -31,31 +20,23 @@ type AuthContextType = {
 type LoginData = Pick<InsertUser, "username" | "password">;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  // Use this for demo auto-login if needed
-  useEffect(() => {
-    // Uncomment to auto-login for testing
-    // setUser(dummyUser);
-  }, []);
+  const {
+    data: user,
+    error,
+    isLoading,
+  } = useQuery<User | null, Error>({
+    queryKey: ["/api/user"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
-      setIsLoading(true);
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setIsLoading(false);
-      
-      // For demo, just return the dummy user
-      return dummyUser;
+      const res = await apiRequest("POST", "/api/login", credentials);
+      return await res.json();
     },
     onSuccess: (user: User) => {
-      setUser(user);
       queryClient.setQueryData(["/api/user"], user);
       toast({
         title: "Login successful",
@@ -73,21 +54,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation({
     mutationFn: async (credentials: InsertUser) => {
-      setIsLoading(true);
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setIsLoading(false);
-      
-      // For demo, create a user based on registration details
-      return {
-        ...dummyUser,
-        username: credentials.username,
-        email: credentials.email,
-        fullName: credentials.fullName,
-      };
+      const res = await apiRequest("POST", "/api/register", credentials);
+      return await res.json();
     },
     onSuccess: (user: User) => {
-      setUser(user);
       queryClient.setQueryData(["/api/user"], user);
       toast({
         title: "Registration successful",
@@ -105,13 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      setIsLoading(true);
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-      setIsLoading(false);
+      await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
-      setUser(null);
       queryClient.setQueryData(["/api/user"], null);
       toast({
         title: "Logged out",
@@ -130,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user: user ?? null,
         isLoading,
         error,
         loginMutation,

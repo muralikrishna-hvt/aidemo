@@ -93,14 +93,7 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
     const now = new Date();
-    // Ensure required fields have default values if they're not provided
-    const user: User = { 
-      ...insertUser, 
-      id, 
-      createdAt: now,
-      riskProfile: insertUser.riskProfile || "Moderate",
-      investmentStyle: insertUser.investmentStyle || "Growth"
-    };
+    const user: User = { ...insertUser, id, createdAt: now };
     this.users.set(id, user);
     return user;
   }
@@ -115,12 +108,7 @@ export class MemStorage implements IStorage {
   async addPortfolioAsset(asset: InsertPortfolioAsset): Promise<PortfolioAsset> {
     const id = this.portfolioAssetIdCounter++;
     const now = new Date();
-    const portfolioAsset: PortfolioAsset = { 
-      ...asset, 
-      id, 
-      lastUpdated: now,
-      ticker: asset.ticker || null
-    };
+    const portfolioAsset: PortfolioAsset = { ...asset, id, lastUpdated: now };
     this.portfolioAssets.set(id, portfolioAsset);
     return portfolioAsset;
   }
@@ -149,12 +137,7 @@ export class MemStorage implements IStorage {
   async addFinancialGoal(goal: InsertFinancialGoal): Promise<FinancialGoal> {
     const id = this.financialGoalIdCounter++;
     const now = new Date();
-    const financialGoal: FinancialGoal = { 
-      ...goal, 
-      id, 
-      createdAt: now,
-      targetDate: goal.targetDate || null
-    };
+    const financialGoal: FinancialGoal = { ...goal, id, createdAt: now };
     this.financialGoals.set(id, financialGoal);
     return financialGoal;
   }

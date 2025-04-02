@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -31,14 +31,18 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
   
-  // Initialize forms with proper defaults and resolver
+  // Redirect if already logged in
+  if (user) {
+    navigate("/dashboard");
+    return null;
+  }
+  
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",
       password: "",
     },
-    mode: "onChange",
   });
   
   const registerForm = useForm<RegisterFormValues>({
@@ -50,26 +54,12 @@ export default function AuthPage() {
       fullName: "",
       email: "",
     },
-    mode: "onChange",
   });
   
-  // Redirect if already logged in
-  useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
-  
   function onLoginSubmit(data: LoginFormValues) {
-    console.log("Login form submitted with:", data);
-    
     loginMutation.mutate(data, {
       onSuccess: () => {
-        console.log("Login succeeded, navigating to dashboard");
         navigate("/dashboard");
-      },
-      onError: (error) => {
-        console.error("Login failed in form handler:", error);
       }
     });
   }
@@ -78,15 +68,9 @@ export default function AuthPage() {
     // Remove confirmPassword as it's not part of the API schema
     const { confirmPassword, ...registerData } = data;
     
-    console.log("Register form submitted with:", registerData);
-    
     registerMutation.mutate(registerData, {
       onSuccess: () => {
-        console.log("Registration succeeded, navigating to dashboard");
         navigate("/dashboard");
-      },
-      onError: (error) => {
-        console.error("Registration failed in form handler:", error);
       }
     });
   }
@@ -130,8 +114,6 @@ export default function AuthPage() {
                               placeholder="Enter your username" 
                               {...field} 
                               autoComplete="username"
-                              onChange={(e) => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
@@ -150,8 +132,6 @@ export default function AuthPage() {
                               placeholder="Enter your password" 
                               {...field} 
                               autoComplete="current-password"
-                              onChange={(e) => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
@@ -181,8 +161,6 @@ export default function AuthPage() {
                               placeholder="Enter your full name" 
                               {...field} 
                               autoComplete="name"
-                              onChange={(e) => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
@@ -201,8 +179,6 @@ export default function AuthPage() {
                               type="email"
                               {...field} 
                               autoComplete="email"
-                              onChange={(e) => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
@@ -220,8 +196,6 @@ export default function AuthPage() {
                               placeholder="Choose a username" 
                               {...field} 
                               autoComplete="username"
-                              onChange={(e) => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
@@ -240,8 +214,6 @@ export default function AuthPage() {
                               placeholder="Choose a strong password" 
                               {...field} 
                               autoComplete="new-password"
-                              onChange={(e) => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
@@ -260,8 +232,6 @@ export default function AuthPage() {
                               placeholder="Confirm your password" 
                               {...field} 
                               autoComplete="new-password"
-                              onChange={(e) => field.onChange(e.target.value)}
-                              value={field.value}
                             />
                           </FormControl>
                           <FormMessage />
