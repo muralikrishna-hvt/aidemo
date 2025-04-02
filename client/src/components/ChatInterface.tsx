@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { quickReplyOptions, initialChatMessages, userProfile } from "@/lib/dummyData";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { quickReplyOptions, initialChatMessages } from "@/lib/dummyData";
 import { sendMessage, getChatHistory } from "@/lib/geminiClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ChatMessage {
   id?: number;
@@ -19,6 +21,7 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // Scroll to bottom of chat messages whenever messages change
   useEffect(() => {
@@ -28,8 +31,10 @@ export function ChatInterface() {
   // Load chat history
   useEffect(() => {
     const loadChatHistory = async () => {
+      if (!user) return;
+      
       try {
-        const history = await getChatHistory(userProfile.id, 15);
+        const history = await getChatHistory(user.id, 15);
         if (history && history.length > 0) {
           setMessages(history);
         }
@@ -39,10 +44,10 @@ export function ChatInterface() {
     };
     
     loadChatHistory();
-  }, []);
+  }, [user]);
   
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || !user) return;
     
     const userMessage: ChatMessage = {
       isUserMessage: true,
@@ -55,7 +60,7 @@ export function ChatInterface() {
     setIsLoading(true);
     
     try {
-      const aiResponse = await sendMessage(inputValue, userProfile.id);
+      const aiResponse = await sendMessage(inputValue, user.id);
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
       toast({
@@ -70,6 +75,8 @@ export function ChatInterface() {
   };
   
   const handleQuickReply = async (option: string) => {
+    if (!user) return;
+    
     setInputValue(option);
     const userMessage: ChatMessage = {
       isUserMessage: true,
@@ -81,7 +88,7 @@ export function ChatInterface() {
     setIsLoading(true);
     
     try {
-      const aiResponse = await sendMessage(option, userProfile.id);
+      const aiResponse = await sendMessage(option, user.id);
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
       toast({
@@ -114,71 +121,73 @@ export function ChatInterface() {
       
       <CardContent className="p-0">
         {/* Chat messages container */}
-        <div className="p-5 space-y-6 max-h-[400px] overflow-y-auto">
-          {messages.map((message, index) => (
-            <div 
-              key={index} 
-              className={`flex items-start space-x-3 ${message.isUserMessage ? 'justify-end' : ''}`}
-            >
-              {!message.isUserMessage && (
+        <ScrollArea className="h-[400px]">
+          <div className="p-5 space-y-6">
+            {messages.map((message, index) => (
+              <div 
+                key={index} 
+                className={`flex items-start space-x-3 ${message.isUserMessage ? 'justify-end' : ''}`}
+              >
+                {!message.isUserMessage && (
+                  <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="material-icons text-sm">smart_toy</span>
+                  </div>
+                )}
+                
+                <div 
+                  className={`${
+                    message.isUserMessage
+                      ? 'bg-blue-50 text-blue-800'
+                      : 'bg-gray-100 text-gray-800'
+                  } rounded-lg p-3 max-w-[85%] shadow-sm`}
+                >
+                  <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                </div>
+                
+                {message.isUserMessage && (
+                  <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="material-icons text-sm">person</span>
+                  </div>
+                )}
+              </div>
+            ))}
+            
+            {/* Quick reply buttons after AI message */}
+            {messages.length > 0 && !messages[messages.length - 1].isUserMessage && (
+              <div className="flex flex-wrap gap-2 px-11 mt-4">
+                {quickReplyOptions.map((option, index) => (
+                  <Button 
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+                    onClick={() => handleQuickReply(option)}
+                  >
+                    {option}
+                  </Button>
+                ))}
+              </div>
+            )}
+            
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="flex items-start space-x-3">
                 <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0 mt-1">
                   <span className="material-icons text-sm">smart_toy</span>
                 </div>
-              )}
-              
-              <div 
-                className={`${
-                  message.isUserMessage
-                    ? 'bg-primary-100 text-primary-800'
-                    : 'bg-gray-100 text-gray-800'
-                } rounded-lg p-3 max-w-[85%]`}
-              >
-                <p className="whitespace-pre-wrap">{message.content}</p>
-              </div>
-              
-              {message.isUserMessage && (
-                <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0 mt-1">
-                  <span className="material-icons text-sm">person</span>
-                </div>
-              )}
-            </div>
-          ))}
-          
-          {/* Quick reply buttons after AI message */}
-          {messages.length > 0 && !messages[messages.length - 1].isUserMessage && (
-            <div className="flex flex-wrap gap-2 px-11">
-              {quickReplyOptions.map((option, index) => (
-                <Button 
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 border-0"
-                  onClick={() => handleQuickReply(option)}
-                >
-                  {option}
-                </Button>
-              ))}
-            </div>
-          )}
-          
-          {/* Loading indicator */}
-          {isLoading && (
-            <div className="flex items-start space-x-3">
-              <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center flex-shrink-0 mt-1">
-                <span className="material-icons text-sm">smart_toy</span>
-              </div>
-              <div className="bg-gray-100 rounded-lg p-3 max-w-[85%]">
-                <div className="flex space-x-2">
-                  <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                <div className="bg-gray-100 rounded-lg p-3 max-w-[85%]">
+                  <div className="flex space-x-2">
+                    <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          
-          <div ref={messagesEndRef} />
-        </div>
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
+        </ScrollArea>
         
         {/* Chat input area */}
         <div className="border-t border-gray-200 p-4 bg-gray-50">

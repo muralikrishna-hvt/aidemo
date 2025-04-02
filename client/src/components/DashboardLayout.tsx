@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -8,11 +9,13 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <main className="flex-1 container mx-auto py-6 px-4">
-        {children}
-      </main>
+      <ScrollArea className="flex-1">
+        <main className="container mx-auto py-8 px-4 max-w-7xl">
+          {children}
+        </main>
+      </ScrollArea>
       <Footer />
     </div>
   );

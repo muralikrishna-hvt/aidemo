@@ -77,6 +77,92 @@ export class MemStorage implements IStorage {
     
     // Initialize with sample market data
     this.initializeSampleMarketData();
+    
+    // Initialize with a test user
+    this.initializeTestUser();
+  }
+  
+  // Initialize a test user for demo purposes
+  private async initializeTestUser() {
+    // User already exists in the database
+    if (await this.getUserByUsername('test1@gmail.com')) {
+      return;
+    }
+    
+    // Create a test user with sample portfolio data
+    const testUser = await this.createUser({
+      username: 'test1@gmail.com',
+      password: 'test1@gmail.com', // In production, this should be hashed
+      email: 'test1@gmail.com',
+      fullName: 'Test User',
+      riskProfile: 'Moderate',
+      investmentStyle: 'Balanced'
+    });
+    
+    // Add sample portfolio assets
+    await this.addPortfolioAsset({
+      userId: testUser.id,
+      assetClass: 'Stocks',
+      assetName: 'S&P 500 ETF',
+      ticker: 'SPY',
+      percentage: '40',
+      value: '20000'
+    });
+    
+    await this.addPortfolioAsset({
+      userId: testUser.id,
+      assetClass: 'Bonds',
+      assetName: 'US Treasury Bond ETF',
+      ticker: 'IEF',
+      percentage: '30',
+      value: '15000'
+    });
+    
+    await this.addPortfolioAsset({
+      userId: testUser.id,
+      assetClass: 'Cash',
+      assetName: 'High-Yield Savings',
+      ticker: null,
+      percentage: '15',
+      value: '7500'
+    });
+    
+    await this.addPortfolioAsset({
+      userId: testUser.id,
+      assetClass: 'Alternative',
+      assetName: 'Real Estate Investment Trust',
+      ticker: 'VNQ',
+      percentage: '15',
+      value: '7500'
+    });
+    
+    // Add sample financial goals
+    await this.addFinancialGoal({
+      userId: testUser.id,
+      name: 'Retirement',
+      targetAmount: '1000000',
+      currentAmount: '250000',
+      targetDate: '2045-01-01',
+      icon: 'savings'
+    });
+    
+    await this.addFinancialGoal({
+      userId: testUser.id,
+      name: 'House Down Payment',
+      targetAmount: '100000',
+      currentAmount: '45000',
+      targetDate: '2025-06-30',
+      icon: 'home'
+    });
+    
+    await this.addFinancialGoal({
+      userId: testUser.id,
+      name: 'Emergency Fund',
+      targetAmount: '25000',
+      currentAmount: '15000',
+      targetDate: null,
+      icon: 'health_and_safety'
+    });
   }
   
   // User operations
@@ -93,7 +179,13 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
     const now = new Date();
-    const user: User = { ...insertUser, id, createdAt: now };
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      createdAt: now, 
+      riskProfile: insertUser.riskProfile || 'Moderate',
+      investmentStyle: insertUser.investmentStyle || 'Balanced'
+    };
     this.users.set(id, user);
     return user;
   }
@@ -108,7 +200,12 @@ export class MemStorage implements IStorage {
   async addPortfolioAsset(asset: InsertPortfolioAsset): Promise<PortfolioAsset> {
     const id = this.portfolioAssetIdCounter++;
     const now = new Date();
-    const portfolioAsset: PortfolioAsset = { ...asset, id, lastUpdated: now };
+    const portfolioAsset: PortfolioAsset = { 
+      ...asset, 
+      id, 
+      lastUpdated: now,
+      ticker: asset.ticker || null
+    };
     this.portfolioAssets.set(id, portfolioAsset);
     return portfolioAsset;
   }
@@ -137,7 +234,12 @@ export class MemStorage implements IStorage {
   async addFinancialGoal(goal: InsertFinancialGoal): Promise<FinancialGoal> {
     const id = this.financialGoalIdCounter++;
     const now = new Date();
-    const financialGoal: FinancialGoal = { ...goal, id, createdAt: now };
+    const financialGoal: FinancialGoal = { 
+      ...goal, 
+      id, 
+      createdAt: now,
+      targetDate: goal.targetDate || null
+    };
     this.financialGoals.set(id, financialGoal);
     return financialGoal;
   }
