@@ -18,56 +18,11 @@ export const userProfile = {
 
 // Portfolio asset allocation data
 export const assetAllocation = [
-  { 
-    assetClass: "Stocks", 
-    percentage: 58.4, 
-    color: "bg-primary-500",
-    name: "US Large Cap Equity Fund",
-    ticker: "VFIAX",
-    category: "Equity",
-    value: 142000.50,
-    returnValue: 12.3
-  },
-  { 
-    assetClass: "Bonds", 
-    percentage: 22.1, 
-    color: "bg-secondary-500",
-    name: "Total Bond Market Index",
-    ticker: "VBTLX",
-    category: "Fixed Income",
-    value: 53750.25,
-    returnValue: 3.7
-  },
-  { 
-    assetClass: "Real Estate", 
-    percentage: 10.3, 
-    color: "bg-accent-500",
-    name: "Real Estate Index Fund",
-    ticker: "VGSLX",
-    category: "Real Estate",
-    value: 25050.75,
-    returnValue: 9.2
-  },
-  { 
-    assetClass: "Cash", 
-    percentage: 6.4, 
-    color: "bg-gray-400",
-    name: "Money Market Fund",
-    ticker: "VMMXX",
-    category: "Money Market",
-    value: 15565.30,
-    returnValue: 1.5
-  },
-  { 
-    assetClass: "Crypto", 
-    percentage: 2.8, 
-    color: "bg-purple-500",
-    name: "Bitcoin ETF",
-    ticker: "BTCETF",
-    category: "Cryptocurrency",
-    value: 6810.20,
-    returnValue: -8.5
-  }
+  { assetClass: "Stocks", percentage: 58.4, color: "bg-primary-500" },
+  { assetClass: "Bonds", percentage: 22.1, color: "bg-secondary-500" },
+  { assetClass: "Real Estate", percentage: 10.3, color: "bg-accent-500" },
+  { assetClass: "Cash", percentage: 6.4, color: "bg-gray-400" },
+  { assetClass: "Crypto", percentage: 2.8, color: "bg-purple-500" }
 ];
 
 // Financial goals data
@@ -123,45 +78,24 @@ export const quickReplyOptions = [
 export const marketData = [
   {
     id: 1,
-    symbol: "SPY",
     name: "S&P 500",
-    currentPrice: 478.45,
-    previousClose: 475.24,
-    percentChange: 0.68,
-    volume: 78234567,
-    marketCap: 42754389000000,
-    peRatio: 26.8,
-    dividendYield: 1.34,
-    sector: "Index",
-    lastUpdated: new Date()
+    value: 4782.45,
+    change: 32.21,
+    percentChange: 0.68
   },
   {
     id: 2,
-    symbol: "NDX",
     name: "NASDAQ",
-    currentPrice: 15943.12,
-    previousClose: 15781.90,
-    percentChange: 1.02,
-    volume: 56123789,
-    marketCap: 21435676000000,
-    peRatio: 32.5,
-    dividendYield: 0.74,
-    sector: "Index",
-    lastUpdated: new Date()
+    value: 15943.12,
+    change: 161.23,
+    percentChange: 1.02
   },
   {
     id: 3,
-    symbol: "TNX",
     name: "10-YR TREASURY",
-    currentPrice: 3.47,
-    previousClose: 3.52,
-    percentChange: -1.42,
-    volume: 4321567,
-    marketCap: 0,
-    peRatio: 0,
-    dividendYield: 3.47,
-    sector: "Bond",
-    lastUpdated: new Date()
+    value: 3.47,
+    change: -0.05,
+    percentChange: -1.42
   }
 ];
 
@@ -171,9 +105,7 @@ export const marketNews = [
     id: 1,
     title: "Fed signals potential rate cut in upcoming meeting",
     content: "Federal Reserve minutes reveal discussions about easing monetary policy in response to cooling inflation data.",
-    summary: "Potential positive impact on your bond holdings",
-    category: "MONETARY POLICY",
-    date: "1 hour ago",
+    impact: "Potential positive impact on your bond holdings",
     icon: "trending_up",
     iconColor: "text-accent-500",
     dotColor: "bg-primary-500"
@@ -182,9 +114,7 @@ export const marketNews = [
     id: 2,
     title: "Tech sector showing strong earnings growth",
     content: "Major technology companies report better-than-expected quarterly results, driven by AI and cloud services.",
-    summary: "Aligns with your tech-focused strategy",
-    category: "EARNINGS",
-    date: "3 hours ago",
+    impact: "Aligns with your tech-focused strategy",
     icon: "check_circle",
     iconColor: "text-success",
     dotColor: "bg-secondary-500"
@@ -193,9 +123,7 @@ export const marketNews = [
     id: 3,
     title: "Real estate market showing signs of cooling",
     content: "Housing starts declined 3.2% last month, indicating potential slowdown in the construction sector.",
-    summary: "Monitor your REIT positions (10.3% of portfolio)",
-    category: "REAL ESTATE",
-    date: "Yesterday",
+    impact: "Monitor your REIT positions (10.3% of portfolio)",
     icon: "priority_high",
     iconColor: "text-warning",
     dotColor: "bg-danger"
