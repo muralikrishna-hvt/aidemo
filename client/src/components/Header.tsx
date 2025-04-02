@@ -1,9 +1,22 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { userProfile } from "@/lib/dummyData";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const [location] = useLocation();
+  const { user, logoutMutation } = useAuth();
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -49,12 +62,28 @@ export function Header() {
           <Button variant="ghost" size="icon" className="hidden md:flex">
             <span className="material-icons">notifications</span>
           </Button>
-          <div className="hidden md:flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center">
-              <span className="material-icons text-sm">person</span>
-            </div>
-            <span className="font-medium">{userProfile.fullName}</span>
-          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="hidden md:flex items-center space-x-2 cursor-pointer">
+                <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center">
+                  <span className="material-icons text-sm">person</span>
+                </div>
+                <span className="font-medium">{user?.fullName || user?.username || "User"}</span>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
           <Button variant="ghost" size="icon" className="md:hidden">
             <span className="material-icons">menu</span>
           </Button>

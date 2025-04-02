@@ -2,7 +2,11 @@ import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import Dashboard from "@/pages/Dashboard";
+import DashboardPage from "@/pages/DashboardPage";
+import MarketsPage from "@/pages/MarketsPage";
+import PortfolioPage from "@/pages/PortfolioPage";
+import LearnPage from "@/pages/LearnPage";
+import AIAdvisorPage from "@/pages/AIAdvisorPage";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
 import { AuthProvider } from "@/hooks/use-auth";
@@ -15,11 +19,11 @@ function Router() {
         {() => <Redirect to="/dashboard" />}
       </Route>
       <Route path="/auth" component={AuthPage} />
-      <ProtectedRoute path="/dashboard" component={Dashboard} />
-      <ProtectedRoute path="/markets" component={Dashboard} />
-      <ProtectedRoute path="/portfolio" component={Dashboard} />
-      <ProtectedRoute path="/learn" component={Dashboard} />
-      <ProtectedRoute path="/advisor" component={Dashboard} />
+      <ProtectedRoute path="/dashboard" component={DashboardPage} />
+      <ProtectedRoute path="/markets" component={MarketsPage} />
+      <ProtectedRoute path="/portfolio" component={PortfolioPage} />
+      <ProtectedRoute path="/learn" component={LearnPage} />
+      <ProtectedRoute path="/advisor" component={AIAdvisorPage} />
       <Route component={NotFound} />
     </Switch>
   );
