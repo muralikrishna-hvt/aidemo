@@ -1,0 +1,101 @@
+Title: AI-Powered Wealth Advisory Chatbot
+
+Description:
+Build an AI-driven wealth advisory chatbot application that provides personalized financial insights, real-time market updates, and seamless Salesforce integration for client relationship management. The chatbot should support multiple platforms (web, mobile, WhatsApp, and voice assistants) and offer an intuitive, user-friendly interface for wealth managers and clients.
+
+UI Components & Features:
+1. User Onboarding & Authentication
+Login & Signup Screen (Supports email, phone, and social logins)
+
+Multi-Factor Authentication (MFA) for secure access
+
+User Profile Setup Page (Collects financial goals, risk preferences, and investment interests)
+
+2. Conversational AI Chat Interface
+Chat Window with AI-driven responses and financial insights
+
+Quick Reply Buttons for predefined financial queries (e.g., "Check portfolio," "Market trends")
+
+Voice Input & Output Support for hands-free interactions
+
+Typing Indicators & Read Receipts for real-time engagement
+
+3. Personalized Financial Dashboard
+Net Worth Summary (Displays assets, liabilities, and portfolio performance)
+
+Investment Portfolio Breakdown (Stocks, mutual funds, crypto, real estate, etc.)
+
+Financial Goal Tracker (Tracks progress toward goals like retirement, home purchase, etc.)
+
+Risk Assessment Indicator (Displays user risk profile dynamically)
+
+Customizable Widgets (Allows users to configure dashboard components)
+
+4. Real-Time Market Data & Insights
+Stock Market Live Feed (Displays top stocks, indices, and trends)
+
+News & Sentiment Analysis Section (AI-curated finance news with impact ratings)
+
+AI-Powered Investment Recommendations (Suggests stocks, ETFs, and funds based on user goals)
+
+Predictive Analytics Charts (Displays market forecasts using AI models)
+
+5. CRM & Salesforce Integration
+Client Contact Management Panel (Shows client details, interactions, and financial history)
+
+Task & Reminder System (Advisors can set follow-ups and automated responses)
+
+Lead Scoring & Segmentation (AI ranks and categorizes potential investors)
+
+6. Compliance & Security Features
+KYC & AML Verification System (Ensures compliance with financial regulations)
+
+Secure Document Upload & Management (Clients can upload financial statements, ID proofs)
+
+Automated Fraud Detection Alerts (Detects suspicious activities and transactions)
+
+7. Smart Alerts & Notifications
+Push Notifications for Stock Movements (Alerts for major price changes in tracked assets)
+
+Periodic Investment Reports (Auto-generated portfolio performance summaries)
+
+Tax Planning Alerts (AI-suggested tax-saving strategies and reminders)
+
+8. Education & Insights Section
+AI-Powered FAQ Bot (Answers common financial questions)
+
+Financial Learning Hub (Articles, videos, and courses on wealth management)
+
+Scenario Analysis Tool (Simulates investment outcomes based on market conditions)
+
+9. Third-Party Integrations
+Stock & Trading APIs (Integrates with Bloomberg, Reuters, or brokerage platforms)
+
+Banking & Payment Gateway Integration (For transaction insights and investment management)
+
+Voice Assistant Compatibility (Works with Alexa, Google Assistant)
+
+10. Settings & Customization
+Theme & Branding Options (Custom UI for financial institutions)
+
+Notification Preferences Panel (Users can enable/disable alerts)
+
+Chatbot Response Customization (Advisors can personalize AI-generated insights)
+
+Application Flow:
+User logs in → Completes profile setup
+
+Chatbot interacts → Offers financial insights & responds to queries
+
+Dashboard displays → Personalized wealth overview
+
+Market trends & insights → AI provides recommendations
+
+Salesforce syncs client interactions → Advisors get data-driven insights
+
+Notifications & reports generated → Users receive investment summaries
+
+Users access education hub → Learn about investment strategies
+
+Final Output:
+A fully functional, AI-powered wealth advisory chatbot with an engaging UI, real-time market data, financial goal tracking, AI-driven recommendations, Salesforce integration, and compliance monitoring
