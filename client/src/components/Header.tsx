@@ -9,37 +9,39 @@ export function Header() {
     <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center px-4 py-3">
         <div className="flex items-center space-x-2">
-          <div className="text-primary text-2xl font-bold flex items-center">
-            <span className="material-icons mr-2">account_balance</span>
-            <span>WealthAdvisor AI</span>
-          </div>
+          <Link href="/dashboard">
+            <div className="text-primary text-2xl font-bold flex items-center cursor-pointer">
+              <span className="material-icons mr-2">account_balance</span>
+              <span>WealthAdvisor AI</span>
+            </div>
+          </Link>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
           <Link href="/dashboard">
-            <a className={`${location === '/dashboard' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium`}>
+            <span className={`${location === '/dashboard' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium cursor-pointer`}>
               Dashboard
-            </a>
+            </span>
           </Link>
           <Link href="/markets">
-            <a className={`${location === '/markets' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium`}>
+            <span className={`${location === '/markets' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium cursor-pointer`}>
               Markets
-            </a>
+            </span>
           </Link>
           <Link href="/portfolio">
-            <a className={`${location === '/portfolio' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium`}>
+            <span className={`${location === '/portfolio' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium cursor-pointer`}>
               Portfolio
-            </a>
+            </span>
           </Link>
           <Link href="/learn">
-            <a className={`${location === '/learn' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium`}>
+            <span className={`${location === '/learn' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium cursor-pointer`}>
               Learn
-            </a>
+            </span>
           </Link>
           <Link href="/advisor">
-            <a className={`${location === '/advisor' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium`}>
+            <span className={`${location === '/advisor' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium cursor-pointer`}>
               AI Advisor
-            </a>
+            </span>
           </Link>
         </nav>
         

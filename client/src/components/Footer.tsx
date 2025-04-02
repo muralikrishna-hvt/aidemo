@@ -10,13 +10,13 @@ export function Footer() {
           </div>
           <div className="flex items-center space-x-6">
             <Link href="/privacy">
-              <a className="text-gray-500 hover:text-primary text-sm">Privacy Policy</a>
+              <span className="text-gray-500 hover:text-primary text-sm cursor-pointer">Privacy Policy</span>
             </Link>
             <Link href="/terms">
-              <a className="text-gray-500 hover:text-primary text-sm">Terms of Service</a>
+              <span className="text-gray-500 hover:text-primary text-sm cursor-pointer">Terms of Service</span>
             </Link>
             <Link href="/support">
-              <a className="text-gray-500 hover:text-primary text-sm">Contact Support</a>
+              <span className="text-gray-500 hover:text-primary text-sm cursor-pointer">Contact Support</span>
             </Link>
           </div>
         </div>

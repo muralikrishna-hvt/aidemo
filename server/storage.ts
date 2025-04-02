@@ -5,9 +5,16 @@ import {
   chatMessages, type ChatMessage, type InsertChatMessage,
   marketData, type MarketData, type InsertMarketData
 } from "@shared/schema";
+import session from "express-session";
+import createMemoryStore from "memorystore";
+
+const MemoryStore = createMemoryStore(session);
 
 // Expanded storage interface with all the required CRUD operations
 export interface IStorage {
+  // Session store
+  sessionStore: session.Store;
+  
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -47,6 +54,8 @@ export class MemStorage implements IStorage {
   private financialGoalIdCounter: number;
   private chatMessageIdCounter: number;
   private marketDataIdCounter: number;
+  
+  public sessionStore: session.Store;
 
   constructor() {
     this.users = new Map();
@@ -60,6 +69,11 @@ export class MemStorage implements IStorage {
     this.financialGoalIdCounter = 1;
     this.chatMessageIdCounter = 1;
     this.marketDataIdCounter = 1;
+    
+    // Initialize session store
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000, // prune expired entries every 24h
+    });
     
     // Initialize with sample market data
     this.initializeSampleMarketData();
@@ -145,7 +159,12 @@ export class MemStorage implements IStorage {
   async getChatHistory(userId: number, limit?: number): Promise<ChatMessage[]> {
     const userMessages = Array.from(this.chatMessages.values())
       .filter((msg) => msg.userId === userId)
-      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      .sort((a, b) => {
+        // Safely handle null timestamps, defaulting to current time
+        const timeA = a.timestamp ? a.timestamp.getTime() : Date.now();
+        const timeB = b.timestamp ? b.timestamp.getTime() : Date.now();
+        return timeA - timeB;
+      });
     
     if (limit) {
       return userMessages.slice(-limit);
@@ -192,25 +211,25 @@ export class MemStorage implements IStorage {
       {
         id: this.marketDataIdCounter++,
         name: "S&P 500",
-        value: 4782.45,
-        change: 32.21,
-        percentChange: 0.68,
+        value: "4782.45",
+        change: "32.21",
+        percentChange: "0.68",
         lastUpdated: now
       },
       {
         id: this.marketDataIdCounter++,
         name: "NASDAQ",
-        value: 15943.12,
-        change: 161.23,
-        percentChange: 1.02,
+        value: "15943.12",
+        change: "161.23",
+        percentChange: "1.02",
         lastUpdated: now
       },
       {
         id: this.marketDataIdCounter++,
         name: "10-YR TREASURY",
-        value: 3.47,
-        change: -0.05,
-        percentChange: -1.42,
+        value: "3.47",
+        change: "-0.05",
+        percentChange: "-1.42",
         lastUpdated: now
       }
     ];
