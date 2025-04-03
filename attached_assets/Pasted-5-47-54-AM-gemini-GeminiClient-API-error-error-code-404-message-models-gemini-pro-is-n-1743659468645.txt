@@ -1,0 +1,15 @@
+5:47:54 AM [gemini] [GeminiClient] API error: {"error":{"code":404,"message":"models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.","status":"NOT_FOUND"}}
+5:47:54 AM [gemini] [GeminiClient] API call error: Error: API error: 404
+5:47:54 AM [express] POST /api/chat/completion 200 in 272ms :: {"userId":1,"content":"Today's market…
+5:47:57 AM [gemini] [GeminiClient] Calling Gemini API with context: 7 messages
+5:47:57 AM [gemini] [GeminiClient] API error: {"error":{"code":404,"message":"models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.","status":"NOT_FOUND"}}
+5:47:57 AM [gemini] [GeminiClient] API call error: Error: API error: 404
+5:47:57 AM [express] POST /api/chat/completion 200 in 79ms :: {"userId":1,"content":"Your portfolio …
+5:47:59 AM [gemini] [GeminiClient] Calling Gemini API with context: 9 messages
+5:48:00 AM [gemini] [GeminiClient] API error: {"error":{"code":404,"message":"models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.","status":"NOT_FOUND"}}
+5:48:00 AM [gemini] [GeminiClient] API call error: Error: API error: 404
+5:48:00 AM [express] POST /api/chat/completion 200 in 85ms :: {"userId":1,"content":"You're making g…
+5:48:23 AM [gemini] [GeminiClient] Calling Gemini API with context: 10 messages
+5:48:23 AM [gemini] [GeminiClient] API error: {"error":{"code":404,"message":"models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.","status":"NOT_FOUND"}}
+5:48:23 AM [gemini] [GeminiClient] API call error: Error: API error: 404
+5:48:23 AM [express] POST /api/chat/completion 200 in 278ms :: {"userId":1,"content":"You're making …

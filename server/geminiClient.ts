@@ -12,7 +12,7 @@ export class GeminiClient {
 
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY || "";
-    this.baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+    this.baseUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent";
     this.contextStore = new Map();
     this.maxContextLength = 10; // Store last 10 messages for context
     this.userProfiles = new Map();

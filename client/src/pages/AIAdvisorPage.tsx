@@ -15,7 +15,11 @@ export default function AIAdvisorPage() {
           </div>
           
           <div className="flex items-center space-x-2 bg-blue-50 text-blue-700 px-3 py-2 rounded-lg text-sm">
-            <span className="material-icons text-blue-600">lightbulb</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+              <path d="M9 18h6"/>
+              <path d="M10 22h4"/>
+            </svg>
             <span>Ask about investments, savings goals, or market insights</span>
           </div>
         </div>
@@ -48,7 +52,12 @@ export default function AIAdvisorPage() {
                   
                   <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
                     <h4 className="font-medium text-blue-800 mb-1 flex items-center">
-                      <span className="material-icons text-blue-600 mr-1 text-sm">psychology</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 mr-1">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                        <line x1="9" x2="9.01" y1="9" y2="9"/>
+                        <line x1="15" x2="15.01" y1="9" y2="9"/>
+                      </svg>
                       Powered by Gemini MCP
                     </h4>
                     <p className="text-sm text-blue-700">Our AI remembers context from previous conversations to provide more relevant advice</p>
