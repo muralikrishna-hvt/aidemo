@@ -63,6 +63,126 @@ interface SalesforceStats {
   totalTasks: number;
 }
 
+// AI Insights data
+interface AIInsight {
+  id: string;
+  title: string;
+  description: string;
+  category: 'opportunity' | 'contact' | 'task' | 'market';
+  priority: 'high' | 'medium' | 'low';
+  recommendedAction: string;
+  timestamp: string;
+}
+
+// Mock AI insights
+const aiInsights: AIInsight[] = [
+  {
+    id: "ai001",
+    title: "High-value prospect engagement opportunity",
+    description: "Smith Financial Group has not been contacted in 15 days. Their portfolio value suggests potential interest in new tax-advantaged products.",
+    category: "contact",
+    priority: "high",
+    recommendedAction: "Schedule a follow-up call to discuss tax planning strategies",
+    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    id: "ai002",
+    title: "Deal at risk of stalling",
+    description: "The Doe Investments LLC opportunity has been in the Needs Analysis stage for 25 days, which is 10 days longer than your average for this stage.",
+    category: "opportunity",
+    priority: "high",
+    recommendedAction: "Propose a meeting with decision-makers to address concerns and accelerate the process",
+    timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    id: "ai003",
+    title: "Client sentiment needs attention",
+    description: "Johnson Family Trust has shown negative sentiment in recent interactions. Analysis suggests concerns about portfolio performance.",
+    category: "contact",
+    priority: "high",
+    recommendedAction: "Schedule a portfolio review session with detailed performance analysis",
+    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    id: "ai004",
+    title: "Cross-sell opportunity identified",
+    description: "Williams Consulting has increased business activity by 30% this quarter. Their current portfolio could benefit from business succession products.",
+    category: "opportunity",
+    priority: "medium",
+    recommendedAction: "Prepare a business succession planning proposal for their next review",
+    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    id: "ai005",
+    title: "Institutional client review needed",
+    description: "Brown Industries Pension fund has new regulatory requirements that may impact their investment strategy.",
+    category: "task",
+    priority: "medium",
+    recommendedAction: "Conduct regulatory impact assessment and update investment policy statement",
+    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  }
+];
+
+// Recommended actions data
+interface RecommendedAction {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string; 
+  priority: 'high' | 'medium' | 'low';
+  category: 'follow-up' | 'proposal' | 'review' | 'meeting';
+  completed: boolean;
+}
+
+// Mock recommended actions
+const recommendedActions: RecommendedAction[] = [
+  {
+    id: "act001",
+    title: "Follow up with John Smith",
+    description: "Discuss portfolio rebalancing options and tax implications",
+    dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: "high",
+    category: "follow-up",
+    completed: false
+  },
+  {
+    id: "act002",
+    title: "Send proposal to Doe Investments",
+    description: "Finalize tax-advantaged investment options proposal",
+    dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: "high",
+    category: "proposal",
+    completed: false
+  },
+  {
+    id: "act003",
+    title: "Review Johnson Trust portfolio",
+    description: "Prepare detailed performance analysis with market context",
+    dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: "high",
+    category: "review",
+    completed: false
+  },
+  {
+    id: "act004",
+    title: "Prepare business succession proposal",
+    description: "Create customized succession planning strategy for Williams Consulting",
+    dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: "medium",
+    category: "proposal",
+    completed: false
+  },
+  {
+    id: "act005",
+    title: "Schedule Brown Industries review meeting",
+    description: "Coordinate quarterly review with pension trustees",
+    dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: "medium",
+    category: "meeting",
+    completed: false
+  }
+];
+
 interface CreateTaskForm {
   subject: string;
   relatedTo: string;
@@ -312,82 +432,219 @@ export function SalesforceIntegration() {
               <span>New Task</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[525px]">
+          <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Create New Task</DialogTitle>
+              <DialogTitle className="flex items-center gap-2 text-xl">
+                <ClipboardList size={20} className="text-primary" />
+                Create New Task
+              </DialogTitle>
               <DialogDescription>
                 Add a new task to track client follow-ups and activities
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="subject">Subject</Label>
-                <Input
-                  id="subject"
-                  value={newTask.subject}
-                  onChange={(e) => setNewTask({...newTask, subject: e.target.value})}
-                  placeholder="Task subject"
-                />
+            <div className="grid gap-6 py-4">
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="subject" className="text-base font-medium">
+                    Task Subject <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="subject"
+                    value={newTask.subject}
+                    onChange={(e) => setNewTask({...newTask, subject: e.target.value})}
+                    placeholder="Enter task subject (e.g., 'Call client about portfolio review')"
+                    className="h-10"
+                  />
+                  {!newTask.subject && (
+                    <p className="text-xs text-muted-foreground">
+                      A clear subject helps you identify the task at a glance
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="relatedTo">Related To</Label>
-                <Select onValueChange={handleContactSelect}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a contact" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {contactOptions.map((contact: Contact) => (
-                      <SelectItem key={contact.id} value={contact.id}>
-                        {contact.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="relatedTo" className="text-base font-medium">
+                    Related To <span className="text-red-500">*</span>
+                  </Label>
+                  <Select onValueChange={handleContactSelect}>
+                    <SelectTrigger className="h-10">
+                      <SelectValue placeholder="Select a contact or account" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <div className="p-2 border-b">
+                        <Input 
+                          placeholder="Search contacts..." 
+                          className="h-8 text-sm"
+                        />
+                      </div>
+                      {contactOptions.map((contact: Contact) => (
+                        <SelectItem key={contact.id} value={contact.id} className="py-2">
+                          <div>
+                            <div className="font-medium">{contact.name}</div>
+                            <div className="text-xs text-muted-foreground">{contact.accountName}</div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {newTask.relatedToName && (
+                    <p className="text-xs text-muted-foreground">
+                      Selected: {newTask.relatedToName}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="dueDate" className="text-base font-medium">Due Date</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Select 
+                      defaultValue="custom"
+                      onValueChange={(value) => {
+                        const today = new Date();
+                        let dueDate = new Date();
+                        
+                        switch(value) {
+                          case 'today':
+                            // Due date is today
+                            break;
+                          case 'tomorrow':
+                            dueDate.setDate(today.getDate() + 1);
+                            break;
+                          case 'next-week':
+                            dueDate.setDate(today.getDate() + 7);
+                            break;
+                          case 'two-weeks':
+                            dueDate.setDate(today.getDate() + 14);
+                            break;
+                          case 'custom':
+                            return; // Don't change anything
+                        }
+                        
+                        setNewTask({
+                          ...newTask, 
+                          dueDate: dueDate.toISOString().slice(0, 10)
+                        });
+                      }}
+                    >
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="Select timeframe" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="today">Today</SelectItem>
+                        <SelectItem value="tomorrow">Tomorrow</SelectItem>
+                        <SelectItem value="next-week">Next Week</SelectItem>
+                        <SelectItem value="two-weeks">Two Weeks</SelectItem>
+                        <SelectItem value="custom">Custom Date</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <Input
+                      id="dueDate"
+                      type="date"
+                      value={newTask.dueDate}
+                      onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
+                      className="h-10"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="dueDate">Due Date</Label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={newTask.dueDate}
-                  onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
-                />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="priority" className="text-base font-medium">Priority</Label>
+                  <div className="flex gap-2">
+                    <Button 
+                      type="button" 
+                      variant={newTask.priority === "High" ? "default" : "outline"}
+                      className={`flex-1 ${newTask.priority === "High" ? "bg-red-500 hover:bg-red-600" : ""}`}
+                      onClick={() => setNewTask({...newTask, priority: "High"})}
+                    >
+                      <span className="mr-1">🔴</span> High
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant={newTask.priority === "Normal" ? "default" : "outline"}
+                      className={`flex-1 ${newTask.priority === "Normal" ? "bg-blue-500 hover:bg-blue-600" : ""}`}
+                      onClick={() => setNewTask({...newTask, priority: "Normal"})}
+                    >
+                      <span className="mr-1">🔵</span> Normal
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant={newTask.priority === "Low" ? "default" : "outline"}
+                      className={`flex-1 ${newTask.priority === "Low" ? "bg-green-500 hover:bg-green-600" : ""}`}
+                      onClick={() => setNewTask({...newTask, priority: "Low"})}
+                    >
+                      <span className="mr-1">🟢</span> Low
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label className="text-base font-medium">Task Type</Label>
+                  <Select defaultValue="follow-up">
+                    <SelectTrigger className="h-10">
+                      <SelectValue placeholder="Select task type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="follow-up">Follow-up Call</SelectItem>
+                      <SelectItem value="meeting">Meeting</SelectItem>
+                      <SelectItem value="proposal">Send Proposal</SelectItem>
+                      <SelectItem value="review">Portfolio Review</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+
               <div className="grid gap-2">
-                <Label htmlFor="priority">Priority</Label>
-                <Select 
-                  value={newTask.priority}
-                  onValueChange={(value) => setNewTask({...newTask, priority: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="High">High</SelectItem>
-                    <SelectItem value="Normal">Normal</SelectItem>
-                    <SelectItem value="Low">Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
-                <Input
+                <Label htmlFor="description" className="text-base font-medium">Description</Label>
+                <textarea
                   id="description"
                   value={newTask.description}
                   onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                  placeholder="Task description"
+                  placeholder="Enter detailed description of the task"
+                  className="min-h-[100px] rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground resize-y"
                 />
               </div>
+
+              <div className="bg-muted/40 rounded-lg p-3 text-xs text-muted-foreground">
+                <p className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                  </svg>
+                  Tasks will be synchronized with Salesforce when credentials are provided
+                </p>
+              </div>
             </div>
-            <DialogFooter>
+            
+            <DialogFooter className="gap-2 sm:gap-0">
               <Button variant="outline" onClick={() => setNewTaskOpen(false)}>
                 Cancel
               </Button>
               <Button 
                 onClick={() => createTaskMutation.mutate(newTask)}
                 disabled={!newTask.subject || !newTask.relatedTo || createTaskMutation.isPending}
+                className="gap-2"
               >
-                {createTaskMutation.isPending ? "Creating..." : "Create Task"}
+                {createTaskMutation.isPending ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle size={16} />
+                    Create Task
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -409,72 +666,236 @@ export function SalesforceIntegration() {
               <div className="animate-pulse">Loading statistics...</div>
             </div>
           ) : stats ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Contacts</CardTitle>
-                  <UserCircle className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.activeContacts}</div>
-                  <p className="text-xs text-muted-foreground">
-                    out of {stats.totalContacts} total contacts
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Open Opportunities</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.openOpportunities}</div>
-                  <p className="text-xs text-muted-foreground">
-                    Value: {formatCurrency(stats.totalOpportunityValue)}
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Pending Tasks</CardTitle>
-                  <ClipboardList className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.pendingTasks}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {stats.highPriorityTasks} high priority tasks
-                  </p>
-                </CardContent>
-              </Card>
+            <div className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Active Contacts</CardTitle>
+                    <UserCircle className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.activeContacts}</div>
+                    <p className="text-xs text-muted-foreground">
+                      out of {stats.totalContacts} total contacts
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Open Opportunities</CardTitle>
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.openOpportunities}</div>
+                    <p className="text-xs text-muted-foreground">
+                      Value: {formatCurrency(stats.totalOpportunityValue)}
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Pending Tasks</CardTitle>
+                    <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.pendingTasks}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {stats.highPriorityTasks} high priority tasks
+                    </p>
+                  </CardContent>
+                </Card>
 
-              <Card className="md:col-span-2 lg:col-span-3">
-                <CardHeader>
-                  <CardTitle>Opportunities by Stage</CardTitle>
-                  <CardDescription>Current pipeline distribution</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {stats.opportunitiesByStage && Object.entries(stats.opportunitiesByStage).map(([stage, count]: [string, number]) => (
-                      <div key={stage} className="flex items-center">
-                        <div className="w-1/3 font-medium">{stage}</div>
-                        <div className="w-2/3 flex items-center gap-2">
-                          <div className="h-3 w-full max-w-xs bg-secondary rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full" 
-                              style={{ 
-                                width: `${Math.min(100, (count / stats.openOpportunities) * 100)}%` 
-                              }}
-                            />
+                <Card className="md:col-span-2 lg:col-span-3">
+                  <CardHeader>
+                    <CardTitle>Opportunities by Stage</CardTitle>
+                    <CardDescription>Current pipeline distribution</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {stats.opportunitiesByStage && Object.entries(stats.opportunitiesByStage).map(([stage, count]: [string, number]) => (
+                        <div key={stage} className="flex items-center">
+                          <div className="w-1/3 font-medium">{stage}</div>
+                          <div className="w-2/3 flex items-center gap-2">
+                            <div className="h-3 w-full max-w-xs bg-secondary rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-primary rounded-full" 
+                                style={{ 
+                                  width: `${Math.min(100, (count / stats.openOpportunities) * 100)}%` 
+                                }}
+                              />
+                            </div>
+                            <span className="text-muted-foreground text-sm">{count}</span>
                           </div>
-                          <span className="text-muted-foreground text-sm">{count}</span>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* AI Insights Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold">AI-Powered Insights</h3>
+                  <Button variant="outline" size="sm" className="h-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="m16 16-3.56-3.56" />
+                      <path d="M14.5 9.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+                    </svg>
+                    <span>Analyze Client Data</span>
+                  </Button>
+                </div>
+                
+                <div className="grid gap-4 md:grid-cols-2">
+                  {aiInsights.map(insight => (
+                    <Card key={insight.id} className={
+                      `overflow-hidden border-l-4 ${
+                        insight.priority === 'high' ? 'border-l-red-500' : 
+                        insight.priority === 'medium' ? 'border-l-amber-500' : 
+                        'border-l-blue-500'
+                      }`
+                    }>
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-base font-semibold">{insight.title}</CardTitle>
+                          <Badge className={
+                            insight.priority === 'high' ? 'bg-red-500' : 
+                            insight.priority === 'medium' ? 'bg-amber-500' : 
+                            'bg-blue-500'
+                          }>
+                            {insight.priority.charAt(0).toUpperCase() + insight.priority.slice(1)}
+                          </Badge>
+                        </div>
+                        <CardDescription className="text-xs text-muted-foreground">
+                          {formatDate(insight.timestamp)} • 
+                          {insight.category === 'opportunity' && ' Opportunity'}
+                          {insight.category === 'contact' && ' Contact'}
+                          {insight.category === 'task' && ' Task'}
+                          {insight.category === 'market' && ' Market'}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="pb-2 text-sm">
+                        <p>{insight.description}</p>
+                      </CardContent>
+                      <CardFooter className="pt-0 flex justify-between items-center">
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-medium">Recommended Action: </span>
+                          {insight.recommendedAction}
+                        </p>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-7 text-xs"
+                          onClick={() => {
+                            setNewTaskOpen(true);
+                            setNewTask({
+                              ...newTask,
+                              subject: `RE: ${insight.title}`,
+                              description: insight.recommendedAction,
+                              priority: insight.priority === 'high' ? 'High' : 
+                                       insight.priority === 'medium' ? 'Normal' : 'Low'
+                            });
+                          }}
+                        >
+                          Create Task
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recommended Actions Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold">Action Items</h3>
+                  <div className="flex gap-2">
+                    <Select defaultValue="all">
+                      <SelectTrigger className="w-[130px] h-8 text-xs">
+                        <SelectValue placeholder="Filter by priority" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Priorities</SelectItem>
+                        <SelectItem value="high">High Priority</SelectItem>
+                        <SelectItem value="medium">Medium Priority</SelectItem>
+                        <SelectItem value="low">Low Priority</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[30px] text-center">Status</TableHead>
+                        <TableHead>Action</TableHead>
+                        <TableHead>Due Date</TableHead>
+                        <TableHead>Priority</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {recommendedActions.map(action => (
+                        <TableRow key={action.id}>
+                          <TableCell className="p-2 text-center">
+                            {action.completed ? (
+                              <CheckCircle2 size={18} className="text-green-500 inline-block" />
+                            ) : (
+                              <div className="h-4 w-4 rounded border border-gray-300 inline-block" />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium">{action.title}</div>
+                            <div className="text-xs text-muted-foreground truncate max-w-xs">{action.description}</div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm">{formatDate(action.dueDate)}</div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={
+                              action.priority === 'high' ? 'bg-red-500' : 
+                              action.priority === 'medium' ? 'bg-amber-500' : 
+                              'bg-blue-500'
+                            }>
+                              {action.priority.charAt(0).toUpperCase() + action.priority.slice(1)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">
+                              {action.category.charAt(0).toUpperCase() + action.category.slice(1)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="h-7 text-xs"
+                              onClick={() => {
+                                setNewTaskOpen(true);
+                                setNewTask({
+                                  ...newTask,
+                                  subject: action.title,
+                                  description: action.description,
+                                  priority: action.priority === 'high' ? 'High' : 
+                                           action.priority === 'medium' ? 'Normal' : 'Low',
+                                  dueDate: new Date(action.dueDate).toISOString().slice(0, 10)
+                                });
+                              }}
+                            >
+                              Create Task
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="flex justify-center py-8">
