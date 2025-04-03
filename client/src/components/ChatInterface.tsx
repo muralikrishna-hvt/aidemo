@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { quickReplyOptions, initialChatMessages } from "@/lib/dummyData";
+import { quickReplyOptions } from "@/lib/dummyData";
 import { sendMessage, getChatHistory } from "@/lib/geminiClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ChatMessage {
   id?: number;
@@ -16,12 +17,13 @@ interface ChatMessage {
 }
 
 export function ChatInterface() {
-  const [messages, setMessages] = useState<ChatMessage[]>(initialChatMessages);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   
   // Scroll to bottom of chat messages whenever messages change
   useEffect(() => {
