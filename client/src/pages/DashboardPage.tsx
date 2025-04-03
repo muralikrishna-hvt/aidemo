@@ -2,6 +2,7 @@ import { AssetAllocation } from "@/components/AssetAllocation";
 import { FinancialGoals } from "@/components/FinancialGoals";
 import { MarketInsights } from "@/components/MarketInsights";
 import { UserProfile } from "@/components/UserProfile";
+import { AIInvestmentInsights } from "@/components/AIInvestmentInsights";
 import { DashboardLayout } from "@/components/DashboardLayout";
 
 export default function DashboardPage() {
@@ -24,6 +25,9 @@ export default function DashboardPage() {
           </div>
           <div className="md:col-span-1 xl:col-span-3">
             <FinancialGoals />
+          </div>
+          <div className="md:col-span-2 xl:col-span-4">
+            <AIInvestmentInsights />
           </div>
         </div>
       </div>
