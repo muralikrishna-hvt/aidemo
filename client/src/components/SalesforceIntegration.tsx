@@ -432,7 +432,7 @@ export function SalesforceIntegration() {
               <span>New Task</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto bg-white">
+          <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-white">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <ClipboardList size={20} className="text-primary" />
