@@ -33,8 +33,6 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-  console.log("url");
- console.log(process.env.DATABASE_URL);
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "development-secret-key",
     resave: false,
