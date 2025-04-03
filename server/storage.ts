@@ -5,6 +5,7 @@ import {
   chatMessages, type ChatMessage, type InsertChatMessage,
   marketData, type MarketData, type InsertMarketData
 } from "@shared/schema";
+import { hashPassword } from "./auth";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 
@@ -91,9 +92,11 @@ export class MemStorage implements IStorage {
     }
     
     // Create a test user with sample portfolio data
+    // Hash the password before creating the test user
+    const hashedPassword = await hashPassword('test1@gmail.com');
     const testUser = await this.createUser({
       username: 'test1@gmail.com',
-      password: 'test1@gmail.com', // In production, this should be hashed
+      password: hashedPassword,
       email: 'test1@gmail.com',
       fullName: 'Test User',
       riskProfile: 'Moderate',
