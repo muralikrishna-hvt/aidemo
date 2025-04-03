@@ -1,9 +1,19 @@
-import { 
-  users, type User, type InsertUser,
-  portfolioAssets, type PortfolioAsset, type InsertPortfolioAsset,
-  financialGoals, type FinancialGoal, type InsertFinancialGoal,
-  chatMessages, type ChatMessage, type InsertChatMessage,
-  marketData, type MarketData, type InsertMarketData
+import {
+  users,
+  type User,
+  type InsertUser,
+  portfolioAssets,
+  type PortfolioAsset,
+  type InsertPortfolioAsset,
+  financialGoals,
+  type FinancialGoal,
+  type InsertFinancialGoal,
+  chatMessages,
+  type ChatMessage,
+  type InsertChatMessage,
+  marketData,
+  type MarketData,
+  type InsertMarketData,
 } from "@shared/schema";
 import { hashPassword } from "./auth";
 import session from "express-session";
@@ -15,31 +25,40 @@ const MemoryStore = createMemoryStore(session);
 export interface IStorage {
   // Session store
   sessionStore: session.Store;
-  
+
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   // Portfolio asset operations
   getPortfolioAssets(userId: number): Promise<PortfolioAsset[]>;
   addPortfolioAsset(asset: InsertPortfolioAsset): Promise<PortfolioAsset>;
-  updatePortfolioAsset(id: number, asset: Partial<InsertPortfolioAsset>): Promise<PortfolioAsset | undefined>;
+  updatePortfolioAsset(
+    id: number,
+    asset: Partial<InsertPortfolioAsset>
+  ): Promise<PortfolioAsset | undefined>;
   deletePortfolioAsset(id: number): Promise<boolean>;
-  
+
   // Financial goals operations
   getFinancialGoals(userId: number): Promise<FinancialGoal[]>;
   addFinancialGoal(goal: InsertFinancialGoal): Promise<FinancialGoal>;
-  updateFinancialGoal(id: number, goal: Partial<InsertFinancialGoal>): Promise<FinancialGoal | undefined>;
+  updateFinancialGoal(
+    id: number,
+    goal: Partial<InsertFinancialGoal>
+  ): Promise<FinancialGoal | undefined>;
   deleteFinancialGoal(id: number): Promise<boolean>;
-  
+
   // Chat message operations
   getChatHistory(userId: number, limit?: number): Promise<ChatMessage[]>;
   addChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
-  
+
   // Market data operations
   getAllMarketData(): Promise<MarketData[]>;
-  updateMarketData(id: number, data: Partial<InsertMarketData>): Promise<MarketData | undefined>;
+  updateMarketData(
+    id: number,
+    data: Partial<InsertMarketData>
+  ): Promise<MarketData | undefined>;
   addMarketData(data: InsertMarketData): Promise<MarketData>;
 }
 
@@ -49,13 +68,13 @@ export class MemStorage implements IStorage {
   private financialGoals: Map<number, FinancialGoal>;
   private chatMessages: Map<number, ChatMessage>;
   private marketData: Map<number, MarketData>;
-  
+
   private userIdCounter: number;
   private portfolioAssetIdCounter: number;
   private financialGoalIdCounter: number;
   private chatMessageIdCounter: number;
   private marketDataIdCounter: number;
-  
+
   public sessionStore: session.Store;
 
   constructor() {
@@ -64,111 +83,111 @@ export class MemStorage implements IStorage {
     this.financialGoals = new Map();
     this.chatMessages = new Map();
     this.marketData = new Map();
-    
+
     this.userIdCounter = 1;
     this.portfolioAssetIdCounter = 1;
     this.financialGoalIdCounter = 1;
     this.chatMessageIdCounter = 1;
     this.marketDataIdCounter = 1;
-    
+
     // Initialize session store
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000, // prune expired entries every 24h
     });
-    
+
     // Initialize with sample market data
     this.initializeSampleMarketData();
-    
+
     // Initialize with a test user
     this.initializeTestUser();
   }
-  
+
   // Initialize a test user for demo purposes
   private async initializeTestUser() {
     // Always ensure test user exists with correct credentials
-    const existingUser = await this.getUserByUsername('test1@gmail.com');
+    const existingUser = await this.getUserByUsername("test1@yopmail.com");
     if (existingUser) {
       this.users.delete(existingUser.id);
     }
-    
+
     // Create a test user with sample portfolio data
     // Hash the password before creating the test user
-    const hashedPassword = await hashPassword('test1@gmail.com');
+    const hashedPassword = await hashPassword("test1@yopmail.com");
     const testUser = await this.createUser({
-      username: 'test1@gmail.com',
+      username: "test1@yopmail.com",
       password: hashedPassword,
-      email: 'test1@gmail.com',
-      fullName: 'Test User',
-      riskProfile: 'Moderate',
-      investmentStyle: 'Balanced'
+      email: "test1@yopmail.com",
+      fullName: "Test User",
+      riskProfile: "Moderate",
+      investmentStyle: "Balanced",
     });
-    
+
     // Add sample portfolio assets
     await this.addPortfolioAsset({
       userId: testUser.id,
-      assetClass: 'Stocks',
-      assetName: 'S&P 500 ETF',
-      ticker: 'SPY',
-      percentage: '40',
-      value: '20000'
+      assetClass: "Stocks",
+      assetName: "S&P 500 ETF",
+      ticker: "SPY",
+      percentage: "40",
+      value: "20000",
     });
-    
+
     await this.addPortfolioAsset({
       userId: testUser.id,
-      assetClass: 'Bonds',
-      assetName: 'US Treasury Bond ETF',
-      ticker: 'IEF',
-      percentage: '30',
-      value: '15000'
+      assetClass: "Bonds",
+      assetName: "US Treasury Bond ETF",
+      ticker: "IEF",
+      percentage: "30",
+      value: "15000",
     });
-    
+
     await this.addPortfolioAsset({
       userId: testUser.id,
-      assetClass: 'Cash',
-      assetName: 'High-Yield Savings',
+      assetClass: "Cash",
+      assetName: "High-Yield Savings",
       ticker: null,
-      percentage: '15',
-      value: '7500'
+      percentage: "15",
+      value: "7500",
     });
-    
+
     await this.addPortfolioAsset({
       userId: testUser.id,
-      assetClass: 'Alternative',
-      assetName: 'Real Estate Investment Trust',
-      ticker: 'VNQ',
-      percentage: '15',
-      value: '7500'
+      assetClass: "Alternative",
+      assetName: "Real Estate Investment Trust",
+      ticker: "VNQ",
+      percentage: "15",
+      value: "7500",
     });
-    
+
     // Add sample financial goals
     await this.addFinancialGoal({
       userId: testUser.id,
-      name: 'Retirement',
-      targetAmount: '1000000',
-      currentAmount: '250000',
-      targetDate: '2045-01-01',
-      icon: 'savings'
+      name: "Retirement",
+      targetAmount: "1000000",
+      currentAmount: "250000",
+      targetDate: "2045-01-01",
+      icon: "savings",
     });
-    
+
     await this.addFinancialGoal({
       userId: testUser.id,
-      name: 'House Down Payment',
-      targetAmount: '100000',
-      currentAmount: '45000',
-      targetDate: '2025-06-30',
-      icon: 'home'
+      name: "House Down Payment",
+      targetAmount: "100000",
+      currentAmount: "45000",
+      targetDate: "2025-06-30",
+      icon: "home",
     });
-    
+
     await this.addFinancialGoal({
       userId: testUser.id,
-      name: 'Emergency Fund',
-      targetAmount: '25000',
-      currentAmount: '15000',
+      name: "Emergency Fund",
+      targetAmount: "25000",
+      currentAmount: "15000",
       targetDate: null,
-      icon: 'health_and_safety'
+      icon: "health_and_safety",
     });
   }
-  
+
   // User operations
   async getUser(id: number): Promise<User | undefined> {
     return this.users.get(id);
@@ -176,91 +195,103 @@ export class MemStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(
-      (user) => user.username === username,
+      (user) => user.username === username
     );
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
     const now = new Date();
-    const user: User = { 
-      ...insertUser, 
-      id, 
-      createdAt: now, 
-      riskProfile: insertUser.riskProfile || 'Moderate',
-      investmentStyle: insertUser.investmentStyle || 'Balanced'
+    const user: User = {
+      ...insertUser,
+      id,
+      createdAt: now,
+      riskProfile: insertUser.riskProfile || "Moderate",
+      investmentStyle: insertUser.investmentStyle || "Balanced",
     };
     this.users.set(id, user);
     return user;
   }
-  
+
   // Portfolio asset operations
   async getPortfolioAssets(userId: number): Promise<PortfolioAsset[]> {
     return Array.from(this.portfolioAssets.values()).filter(
-      (asset) => asset.userId === userId,
+      (asset) => asset.userId === userId
     );
   }
-  
-  async addPortfolioAsset(asset: InsertPortfolioAsset): Promise<PortfolioAsset> {
+
+  async addPortfolioAsset(
+    asset: InsertPortfolioAsset
+  ): Promise<PortfolioAsset> {
     const id = this.portfolioAssetIdCounter++;
     const now = new Date();
-    const portfolioAsset: PortfolioAsset = { 
-      ...asset, 
-      id, 
+    const portfolioAsset: PortfolioAsset = {
+      ...asset,
+      id,
       lastUpdated: now,
-      ticker: asset.ticker || null
+      ticker: asset.ticker || null,
     };
     this.portfolioAssets.set(id, portfolioAsset);
     return portfolioAsset;
   }
-  
-  async updatePortfolioAsset(id: number, asset: Partial<InsertPortfolioAsset>): Promise<PortfolioAsset | undefined> {
+
+  async updatePortfolioAsset(
+    id: number,
+    asset: Partial<InsertPortfolioAsset>
+  ): Promise<PortfolioAsset | undefined> {
     const existingAsset = this.portfolioAssets.get(id);
     if (!existingAsset) return undefined;
-    
+
     const now = new Date();
-    const updatedAsset: PortfolioAsset = { ...existingAsset, ...asset, lastUpdated: now };
+    const updatedAsset: PortfolioAsset = {
+      ...existingAsset,
+      ...asset,
+      lastUpdated: now,
+    };
     this.portfolioAssets.set(id, updatedAsset);
     return updatedAsset;
   }
-  
+
   async deletePortfolioAsset(id: number): Promise<boolean> {
     return this.portfolioAssets.delete(id);
   }
-  
+
   // Financial goals operations
   async getFinancialGoals(userId: number): Promise<FinancialGoal[]> {
     return Array.from(this.financialGoals.values()).filter(
-      (goal) => goal.userId === userId,
+      (goal) => goal.userId === userId
     );
   }
-  
+
   async addFinancialGoal(goal: InsertFinancialGoal): Promise<FinancialGoal> {
     const id = this.financialGoalIdCounter++;
     const now = new Date();
-    const financialGoal: FinancialGoal = { 
-      ...goal, 
-      id, 
+    const financialGoal: FinancialGoal = {
+      ...goal,
+      id,
       createdAt: now,
-      targetDate: goal.targetDate || null
+      targetDate: goal.targetDate || null,
     };
     this.financialGoals.set(id, financialGoal);
     return financialGoal;
   }
-  
-  async updateFinancialGoal(id: number, goal: Partial<InsertFinancialGoal>): Promise<FinancialGoal | undefined> {
+
+  async updateFinancialGoal(
+    id: number,
+    goal: Partial<InsertFinancialGoal>
+  ): Promise<FinancialGoal | undefined> {
     const existingGoal = this.financialGoals.get(id);
     if (!existingGoal) return undefined;
-    
+
     const updatedGoal: FinancialGoal = { ...existingGoal, ...goal };
     this.financialGoals.set(id, updatedGoal);
     return updatedGoal;
   }
-  
+
   async deleteFinancialGoal(id: number): Promise<boolean> {
     return this.financialGoals.delete(id);
   }
-  
+
   // Chat message operations
   async getChatHistory(userId: number, limit?: number): Promise<ChatMessage[]> {
     const userMessages = Array.from(this.chatMessages.values())
@@ -271,14 +302,14 @@ export class MemStorage implements IStorage {
         const timeB = b.timestamp ? b.timestamp.getTime() : Date.now();
         return timeA - timeB;
       });
-    
+
     if (limit) {
       return userMessages.slice(-limit);
     }
-    
+
     return userMessages;
   }
-  
+
   async addChatMessage(message: InsertChatMessage): Promise<ChatMessage> {
     const id = this.chatMessageIdCounter++;
     const now = new Date();
@@ -286,22 +317,29 @@ export class MemStorage implements IStorage {
     this.chatMessages.set(id, chatMessage);
     return chatMessage;
   }
-  
+
   // Market data operations
   async getAllMarketData(): Promise<MarketData[]> {
     return Array.from(this.marketData.values());
   }
-  
-  async updateMarketData(id: number, data: Partial<InsertMarketData>): Promise<MarketData | undefined> {
+
+  async updateMarketData(
+    id: number,
+    data: Partial<InsertMarketData>
+  ): Promise<MarketData | undefined> {
     const existingData = this.marketData.get(id);
     if (!existingData) return undefined;
-    
+
     const now = new Date();
-    const updatedData: MarketData = { ...existingData, ...data, lastUpdated: now };
+    const updatedData: MarketData = {
+      ...existingData,
+      ...data,
+      lastUpdated: now,
+    };
     this.marketData.set(id, updatedData);
     return updatedData;
   }
-  
+
   async addMarketData(data: InsertMarketData): Promise<MarketData> {
     const id = this.marketDataIdCounter++;
     const now = new Date();
@@ -309,7 +347,7 @@ export class MemStorage implements IStorage {
     this.marketData.set(id, marketDataItem);
     return marketDataItem;
   }
-  
+
   // Initialize sample market data
   private initializeSampleMarketData() {
     const now = new Date();
@@ -320,7 +358,7 @@ export class MemStorage implements IStorage {
         value: "4782.45",
         change: "32.21",
         percentChange: "0.68",
-        lastUpdated: now
+        lastUpdated: now,
       },
       {
         id: this.marketDataIdCounter++,
@@ -328,7 +366,7 @@ export class MemStorage implements IStorage {
         value: "15943.12",
         change: "161.23",
         percentChange: "1.02",
-        lastUpdated: now
+        lastUpdated: now,
       },
       {
         id: this.marketDataIdCounter++,
@@ -336,11 +374,11 @@ export class MemStorage implements IStorage {
         value: "3.47",
         change: "-0.05",
         percentChange: "-1.42",
-        lastUpdated: now
-      }
+        lastUpdated: now,
+      },
     ];
-    
-    initialMarketData.forEach(data => {
+
+    initialMarketData.forEach((data) => {
       this.marketData.set(data.id, data);
     });
   }
