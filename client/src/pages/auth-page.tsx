@@ -102,11 +102,6 @@ export default function AuthPage() {
             <CardContent className="pt-4">
               {activeTab === "login" ? (
                 <Form {...loginForm}>
-                  <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-md text-sm">
-                    <p className="font-medium">Demo Account:</p>
-                    <p>Username: test1@gmail.com</p>
-                    <p>Password: test1@gmail.com</p>
-                  </div>
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                     <FormField
                       control={loginForm.control}
@@ -134,7 +129,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input 
                               type="password" 
-                              placeholder="Enter your password" 
+                              placeholder="Enter your password (e.g., Password@1234)" 
                               {...field} 
                               autoComplete="current-password"
                             />
