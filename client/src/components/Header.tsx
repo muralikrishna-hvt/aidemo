@@ -168,6 +168,11 @@ export function Header() {
               AI Advisor
             </span>
           </Link>
+          <Link href="/salesforce">
+            <span className={`${location === '/salesforce' ? 'text-primary font-semibold' : 'text-gray-700'} hover:text-primary font-medium cursor-pointer`}>
+              Salesforce CRM
+            </span>
+          </Link>
         </nav>
         
         <div className="flex items-center space-x-4">

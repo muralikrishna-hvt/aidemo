@@ -11,6 +11,7 @@ import {
 } from "@shared/schema";
 import { log } from "./vite";
 import { setupAuth } from "./auth";
+import { salesforceService, ContactFilter, OpportunityFilter, TaskFilter } from "./salesforceService";
 
 // Extend the Express Request type to include user
 declare global {
@@ -203,6 +204,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const marketData = await storage.getAllMarketData();
       return res.status(200).json(marketData);
     } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Salesforce CRM Integration Routes
+  
+  // Get Salesforce contacts
+  app.get("/api/salesforce/contacts", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const userId = req.user.id;
+      const filter: ContactFilter = {};
+      
+      // Parse query parameters
+      if (req.query.search) filter.search = req.query.search as string;
+      if (req.query.status) filter.status = req.query.status as any;
+      if (req.query.sentiment) filter.sentiment = req.query.sentiment as any;
+      if (req.query.tags) filter.tags = (req.query.tags as string).split(',');
+      
+      const contacts = await salesforceService.getContactsForUser(userId, filter);
+      return res.status(200).json(contacts);
+    } catch (error: any) {
+      log(`Error fetching Salesforce contacts: ${error.message}`, "api");
+      return res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Get Salesforce opportunities
+  app.get("/api/salesforce/opportunities", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const userId = req.user.id;
+      const filter: OpportunityFilter = {};
+      
+      // Parse query parameters
+      if (req.query.search) filter.search = req.query.search as string;
+      if (req.query.stage) filter.stage = req.query.stage as string;
+      if (req.query.minAmount) filter.minAmount = parseFloat(req.query.minAmount as string);
+      if (req.query.maxAmount) filter.maxAmount = parseFloat(req.query.maxAmount as string);
+      if (req.query.probability) filter.probability = parseFloat(req.query.probability as string);
+      
+      const opportunities = await salesforceService.getOpportunitiesForUser(userId, filter);
+      return res.status(200).json(opportunities);
+    } catch (error: any) {
+      log(`Error fetching Salesforce opportunities: ${error.message}`, "api");
+      return res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Get Salesforce tasks
+  app.get("/api/salesforce/tasks", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const userId = req.user.id;
+      const filter: TaskFilter = {};
+      
+      // Parse query parameters
+      if (req.query.search) filter.search = req.query.search as string;
+      if (req.query.status) filter.status = req.query.status as any;
+      if (req.query.priority) filter.priority = req.query.priority as any;
+      if (req.query.dueDate) filter.dueDate = req.query.dueDate as any;
+      
+      const tasks = await salesforceService.getTasksForUser(userId, filter);
+      return res.status(200).json(tasks);
+    } catch (error: any) {
+      log(`Error fetching Salesforce tasks: ${error.message}`, "api");
+      return res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Create new Salesforce task
+  app.post("/api/salesforce/tasks", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const newTask = req.body;
+      const task = await salesforceService.createTask(newTask);
+      return res.status(201).json(task);
+    } catch (error: any) {
+      log(`Error creating Salesforce task: ${error.message}`, "api");
+      return res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Update Salesforce task status
+  app.patch("/api/salesforce/tasks/:id", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const taskId = req.params.id;
+      const { status } = req.body;
+      
+      if (!status) {
+        return res.status(400).json({ message: "Status is required" });
+      }
+      
+      const success = await salesforceService.updateTaskStatus(taskId, status);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      
+      return res.status(200).json({ success: true });
+    } catch (error: any) {
+      log(`Error updating Salesforce task: ${error.message}`, "api");
+      return res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Get Salesforce statistics
+  app.get("/api/salesforce/stats", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const userId = req.user.id;
+      const stats = await salesforceService.getStatsForUser(userId);
+      return res.status(200).json(stats);
+    } catch (error: any) {
+      log(`Error fetching Salesforce stats: ${error.message}`, "api");
       return res.status(400).json({ message: error.message });
     }
   });

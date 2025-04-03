@@ -7,6 +7,7 @@ import MarketsPage from "@/pages/MarketsPage";
 import PortfolioPage from "@/pages/PortfolioPage";
 import LearnPage from "@/pages/LearnPage";
 import AIAdvisorPage from "@/pages/AIAdvisorPage";
+import SalesforceIntegrationPage from "@/pages/SalesforceIntegrationPage";
 import AuthPage from "@/pages/auth-page";
 import LandingPage from "@/pages/LandingPage";
 import NotFound from "@/pages/not-found";
@@ -35,6 +36,7 @@ function Router() {
       <ProtectedRoute path="/portfolio" component={PortfolioPage} />
       <ProtectedRoute path="/learn" component={LearnPage} />
       <ProtectedRoute path="/advisor" component={AIAdvisorPage} />
+      <ProtectedRoute path="/salesforce" component={SalesforceIntegrationPage} />
       <Route component={NotFound} />
     </Switch>
   );
