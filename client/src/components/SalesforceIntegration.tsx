@@ -425,14 +425,14 @@ export function SalesforceIntegration() {
             Manage your Salesforce contacts, opportunities, and tasks
           </p>
         </div>
-        <Dialog open={newTaskOpen} onOpenChange={setNewTaskOpen}>
+        <Dialog open={newTaskOpen} onOpenChange={setNewTaskOpen} >
           <DialogTrigger asChild>
             <Button className="flex items-center gap-2">
               <PlusCircle size={16} />
               <span>New Task</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto bg-white">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <ClipboardList size={20} className="text-primary" />

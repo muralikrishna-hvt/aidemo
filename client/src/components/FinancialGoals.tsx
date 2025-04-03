@@ -366,7 +366,7 @@ export function FinancialGoals() {
       
       {/* Add Goal Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
             <DialogTitle>Add Financial Goal</DialogTitle>
             <DialogDescription>
