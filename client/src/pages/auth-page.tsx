@@ -31,26 +31,7 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
   
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-  
-  const registerForm = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      confirmPassword: "",
-      fullName: "",
-      email: "",
-    },
-  });
-
-  // Redirect if already logged in - moved after all hooks
+  // Redirect if already logged in
   if (user) {
     navigate("/dashboard");
     return null;
@@ -59,8 +40,8 @@ export default function AuthPage() {
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      username: "test1@gmail.com",
+      password: "test1@gmail.com",
     },
   });
   
@@ -121,6 +102,11 @@ export default function AuthPage() {
             <CardContent className="pt-4">
               {activeTab === "login" ? (
                 <Form {...loginForm}>
+                  <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-md text-sm">
+                    <p className="font-medium">Demo Account:</p>
+                    <p>Username: test1@gmail.com</p>
+                    <p>Password: test1@gmail.com</p>
+                  </div>
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                     <FormField
                       control={loginForm.control}
