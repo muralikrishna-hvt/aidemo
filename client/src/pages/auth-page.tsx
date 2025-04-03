@@ -102,12 +102,14 @@ export default function AuthPage() {
             <CardContent className="pt-4">
               {activeTab === "login" ? (
                 <Form {...loginForm}>
-                  
+                  <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-md text-sm">
+                    <p className="font-medium">Demo Account:</p>
+                    <p>Username: test1@gmail.com</p>
+                    <p>Password: test1@gmail.com</p>
+                  </div>
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                    {/* Hidden demo account info but prefilled in the form */}
                     <FormField
                       control={loginForm.control}
-                      defaultValue="test1@gmail.com"
                       name="username"
                       render={({ field }) => (
                         <FormItem>
