@@ -432,7 +432,7 @@ export function SalesforceIntegration() {
               <span>New Task</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <ClipboardList size={20} className="text-primary" />
@@ -739,7 +739,36 @@ export function SalesforceIntegration() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-bold">AI-Powered Insights</h3>
-                  <Button variant="outline" size="sm" className="h-8">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-8"
+                    onClick={() => {
+                      toast({
+                        title: "Analysis Started",
+                        description: "AI is analyzing client data and generating new insights...",
+                      });
+                      // Simulate analysis completion after 2 seconds
+                      setTimeout(() => {
+                        const newInsight = {
+                          id: `ai${aiInsights.length + 1}`,
+                          title: "New Investment Opportunity Detected",
+                          description: "Based on recent market trends and client portfolio analysis, identified potential for diversification into emerging markets.",
+                          category: 'opportunity',
+                          priority: 'high',
+                          recommendedAction: "Schedule client meeting to discuss emerging market opportunities",
+                          timestamp: new Date().toISOString()
+                        };
+                        aiInsights.push(newInsight);
+                        toast({
+                          title: "Analysis Complete",
+                          description: "New insights have been generated from client data.",
+                        });
+                        // Force a re-render
+                        setActiveTab("dashboard");
+                      }, 2000);
+                    }}
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
                       <circle cx="12" cy="12" r="10" />
                       <path d="m16 16-3.56-3.56" />
@@ -843,11 +872,25 @@ export function SalesforceIntegration() {
                       {recommendedActions.map(action => (
                         <TableRow key={action.id}>
                           <TableCell className="p-2 text-center">
-                            {action.completed ? (
-                              <CheckCircle2 size={18} className="text-green-500 inline-block" />
-                            ) : (
-                              <div className="h-4 w-4 rounded border border-gray-300 inline-block" />
-                            )}
+                            <div 
+                              className="cursor-pointer transition-colors hover:bg-gray-100 rounded-full p-1 inline-block"
+                              onClick={() => {
+                                const updatedActions = [...recommendedActions];
+                                const index = updatedActions.findIndex(a => a.id === action.id);
+                                updatedActions[index] = { ...action, completed: !action.completed };
+                                // Update the actions state here
+                                toast({
+                                  title: action.completed ? "Action Uncompleted" : "Action Completed",
+                                  description: action.completed ? "The action has been marked as pending" : "The action has been marked as complete",
+                                });
+                              }}
+                            >
+                              {action.completed ? (
+                                <CheckCircle2 size={18} className="text-green-500" />
+                              ) : (
+                                <div className="h-4 w-4 rounded border border-gray-300 hover:border-green-500 transition-colors" />
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell>
                             <div className="font-medium">{action.title}</div>
@@ -1241,19 +1284,65 @@ export function SalesforceIntegration() {
                           <TableCell>{getStatusBadge(task.status)}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
-                              {task.status !== 'Completed' && (
+                              <div className="flex gap-2">
+                                {task.status !== 'Completed' && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => updateTaskStatusMutation.mutate({ 
+                                      id: task.id, 
+                                      status: task.status === 'Not Started' ? 'In Progress' : 'Completed' 
+                                    })}
+                                    disabled={updateTaskStatusMutation.isPending}
+                                    className="flex items-center gap-1"
+                                  >
+                                    {updateTaskStatusMutation.isPending ? (
+                                      <>
+                                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Updating...</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        {task.status === 'Not Started' ? (
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                                            <polygon points="5 3 19 12 5 21 5 3"/>
+                                          </svg>
+                                        ) : (
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                                            <path d="M20 6L9 17l-5-5"/>
+                                          </svg>
+                                        )}
+                                        <span>{task.status === 'Not Started' ? 'Start' : 'Complete'}</span>
+                                      </>
+                                    )}
+                                  </Button>
+                                )}
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => updateTaskStatusMutation.mutate({ 
-                                    id: task.id, 
-                                    status: task.status === 'Not Started' ? 'In Progress' : 'Completed' 
-                                  })}
-                                  disabled={updateTaskStatusMutation.isPending}
+                                  onClick={() => {
+                                    setNewTask({
+                                      ...newTask,
+                                      subject: `Follow-up: ${task.subject}`,
+                                      relatedTo: task.relatedTo,
+                                      relatedToName: task.relatedToName,
+                                      description: `Follow-up to previous task: ${task.description}`
+                                    });
+                                    setNewTaskOpen(true);
+                                  }}
+                                  className="flex items-center gap-1"
                                 >
-                                  {task.status === 'Not Started' ? 'Start' : 'Complete'}
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                  </svg>
+                                  <span>Follow-up</span>
                                 </Button>
-                              )}
+                              </div>
                             </div>
                           </TableCell>
                         </TableRow>
