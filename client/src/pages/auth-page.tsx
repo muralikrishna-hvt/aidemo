@@ -104,8 +104,10 @@ export default function AuthPage() {
                 <Form {...loginForm}>
                   
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    {/* Hidden demo account info but prefilled in the form */}
                     <FormField
                       control={loginForm.control}
+                      defaultValue="test1@gmail.com"
                       name="username"
                       render={({ field }) => (
                         <FormItem>

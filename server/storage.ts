@@ -84,9 +84,10 @@ export class MemStorage implements IStorage {
   
   // Initialize a test user for demo purposes
   private async initializeTestUser() {
-    // User already exists in the database
-    if (await this.getUserByUsername('test1@gmail.com')) {
-      return;
+    // Always ensure test user exists with correct credentials
+    const existingUser = await this.getUserByUsername('test1@gmail.com');
+    if (existingUser) {
+      this.users.delete(existingUser.id);
     }
     
     // Create a test user with sample portfolio data
